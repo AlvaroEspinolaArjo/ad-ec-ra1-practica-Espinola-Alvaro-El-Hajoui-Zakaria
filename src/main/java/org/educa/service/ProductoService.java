@@ -69,7 +69,6 @@ public class ProductoService {
         // dentro del fichero de resultado
         BufferedWriter writer = new BufferedWriter(new FileWriter(ficheroResultado));
 
-
     }
 
     public void exportExcel(String path, String fileXml) throws JAXBException, IOException, ParseException {
