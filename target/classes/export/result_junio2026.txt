@@ -1,0 +1,6 @@
+Fecha: junio2026
+NumeroDeProductos: 5
+BeneficioTotal: 1223.7228
+Ruta del fichero: C:\Users\elhaj\Desktop\ad-ec-ra1-practica-Espinola-Alvaro-El-Hajoui-Zakaria\src\main\resources\xml\inventario_junio2026.xml
+Nombre del fichero: inventario_junio2026
+Tamaño del fichero: 3903 bytes
