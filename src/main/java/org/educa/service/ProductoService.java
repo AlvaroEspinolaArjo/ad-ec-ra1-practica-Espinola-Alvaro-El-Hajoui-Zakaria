@@ -148,7 +148,7 @@ public class ProductoService {
 
         // Creamos el nombre del fichero Excel
         // Por ejemplo: export_junio2026.xlsx
-        File ficheroExcel = new File(carpeta, "export_" + fecha + ".xlsx");
+        File ficheroExcel = new File(carpeta,"export_" + fecha + ".xlsx");
 
         // Creamos un nuevo libro de Excel
         Workbook workbook = new XSSFWorkbook();
