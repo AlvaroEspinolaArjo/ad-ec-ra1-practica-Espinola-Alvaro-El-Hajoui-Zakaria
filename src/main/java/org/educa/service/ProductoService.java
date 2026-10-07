@@ -32,10 +32,10 @@ public class ProductoService {
     /**
      * Exporta un resumen de los productos a un fichero de texto.
      *
-     * @param path La ruta de la carpeta donde se guardará el fichero.
+     * @param path    La ruta de la carpeta donde se guardará el fichero.
      * @param fileXml La ruta al fichero XML.
      * @throws JAXBException Excepción producida al procesar el fichero XML.
-     * @throws IOException Excepción producida al crear o escribir el fichero de texto.
+     * @throws IOException   Excepción producida al crear o escribir el fichero de texto.
      */
 
     public void exportSummary(String path, String fileXml) throws JAXBException, IOException {
@@ -99,10 +99,10 @@ public class ProductoService {
     /**
      * Exporta los productos de un fichero XML a un fichero Excel.
      *
-     * @param path La ruta de la carpeta donde se guardará el fichero Excel.
+     * @param path    La ruta de la carpeta donde se guardará el fichero Excel.
      * @param fileXml La ruta al fichero XML que contiene los productos.
-     * @throws JAXBException Excepción producida al procesar el fichero XML.
-     * @throws IOException Excepción producida al crear o escribir el fichero Excel.
+     * @throws JAXBException  Excepción producida al procesar el fichero XML.
+     * @throws IOException    Excepción producida al crear o escribir el fichero Excel.
      * @throws ParseException Excepción producida al procesar datos con formato incorrecto.
      */
 
@@ -377,127 +377,6 @@ public class ProductoService {
                 estiloEuros = estiloEurosBlanco;
                 estiloPorcentaje = estiloPorcentajeBlanco;
             }
-
-            // CÓDIGO
-
-
-            Cell codigo = fila.createCell(0);
-
-            codigo.setCellValue(
-                    productoEntity.getProducto().getCodigo()
-            );
-
-            // Aplicamos color y negrita
-            codigo.setCellStyle(estiloCodigo);
-
-            // NÚMERO DE SERIE
-
-
-            Cell numeroSerie = fila.createCell(1);
-
-            numeroSerie.setCellValue(
-                    productoEntity.getProducto().getNumeroSerie()
-            );
-
-            numeroSerie.setCellStyle(estiloFila);
-
-            // PRECIO
-
-            Cell precio = fila.createCell(2);
-
-            precio.setCellValue(
-                    productoEntity.getProducto().getPrecio().doubleValue()
-            );
-
-            precio.setCellStyle(estiloEuros);
-
-            // DESCUENTO
-
-
-            Cell descuento = fila.createCell(3);
-
-            descuento.setCellValue(
-                    productoEntity.getProducto().getDescuento().doubleValue() / 100
-            );
-
-            descuento.setCellStyle(estiloPorcentaje);
-
-
-            // PRECIO FINAL
-
-
-            Cell precioFinal = fila.createCell(4);
-
-            precioFinal.setCellValue(
-                    productoEntity.getPrecioFinal().doubleValue()
-            );
-
-            precioFinal.setCellStyle(estiloEuros);
-
-
-            // COSTES DE ENVÍO
-
-
-            Cell costesEnvio = fila.createCell(5);
-
-            costesEnvio.setCellValue(
-                    productoEntity.getProducto()
-                            .getCostes()
-                            .getCostesEnvio()
-                            .doubleValue()
-            );
-
-            costesEnvio.setCellStyle(estiloEuros);
-
-            // COSTES DE ALMACENAJE
-
-
-            Cell costesAlmacenaje = fila.createCell(6);
-
-            costesAlmacenaje.setCellValue(
-                    productoEntity.getProducto()
-                            .getCostes()
-                            .getCostesAlmacenaje()
-                            .doubleValue()
-            );
-
-            costesAlmacenaje.setCellStyle(estiloEuros);
-
-
-            // BENEFICIO
-
-
-            Cell beneficio = fila.createCell(7);
-
-            beneficio.setCellValue(
-                    productoEntity.getProfit().doubleValue()
-            );
-
-            beneficio.setCellStyle(estiloEuros);
         }
-
-
-        // AJUSTAMOS EL ANCHO DE LAS COLUMNAS
-
-
-        for (int i = 0; i < columnas.length; i++) {
-            hoja.autoSizeColumn(i);
-        }
-
-        // Damos espacio al número de serie
-        hoja.setColumnWidth(1, 20 * 256);
-
-        // GUARDAMOS EL EXCEL
-
-        FileOutputStream salida = new FileOutputStream(ficheroExcel);
-
-        // Escribimos el contenido del Workbook en el fichero Excel
-        workbook.write(salida);
-
-        // Cerramos el flujo de salida
-        salida.close();
-
-        // Cerramos el Workbook
-        workbook.close();
     }
 }
