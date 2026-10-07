@@ -6,7 +6,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.educa.dao.ProductoDAO;
 import org.educa.entity.ProductoEntity;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -21,9 +25,8 @@ public class ProductoService {
      * @return Una lista de productos leídos del fichero XML.
      * @throws JAXBException Excepción producida al procesar el fichero XML.
      */
-
     public List<ProductoEntity> readFile(String fileXml) throws JAXBException {
-        return productoDAO.readFile(fileXml); // Llama al metodo readFile() de productoDAO y devuelve el resultado.
+        return productoDAO.readFile(fileXml);
     }
 
     /**
@@ -37,82 +40,65 @@ public class ProductoService {
 
     public void exportSummary(String path, String fileXml) throws JAXBException, IOException {
 
-        // Leemos el fichero XML y obtenemos una lista con todos los productos
         List<ProductoEntity> productos = readFile(fileXml);
 
-        // Creamos un objeto File que representa el fichero XML
         File ficheroXML = new File(fileXml);
 
-        // Obtenemos solamente el nombre del fichero XML
-        // Ejemplo: inventario_junio2026.xml
         String nombreFichero = ficheroXML.getName();
 
-        // Quitamos la extensión .xml del nombre
-        // Resultado: inventario_junio2026
-        String nombreSinExtension = nombreFichero.substring(0, nombreFichero.lastIndexOf("."));
 
-        // Obtenemos la fecha que aparece después del "_"
-        // Ejemplo: inventario_junio2026 -> junio2026
-        String fecha = nombreSinExtension.substring(nombreSinExtension.indexOf("_") + 1);
+        String nombreSinExtension = nombreFichero.substring(
+                0, nombreFichero.lastIndexOf(".")
+        );
 
-        // Variable donde vamos a guardar el beneficio total
+        String fecha = nombreSinExtension.substring(
+                nombreSinExtension.indexOf("_") + 1
+        );
+
         double beneficioTotal = 0;
 
-        // Recorremos todos los productos de la lista
         for (ProductoEntity producto : productos) {
-
-            // Sumamos el beneficio de cada producto al beneficio total
-            // doubleValue() convierte el BigDecimal a double
             beneficioTotal += producto.getProfit().doubleValue();
         }
 
-        // Creamos un objeto File que representa la carpeta donde
-        // queremos guardar el fichero de resultado
         File carpeta = new File(path);
 
-        // Comprobamos si la carpeta no existe
         if (!carpeta.exists()) {
-
-            // Creamos la carpeta
             carpeta.mkdirs();
         }
 
-        // Creamos el fichero de resultado dentro de la carpeta
-        // Ejemplo: result_junio2026.txt
-        File ficheroResultado = new File(carpeta, "result_" + fecha + ".txt");
+        File ficheroResultado = new File(
+                carpeta,
+                "result_" + fecha + ".txt"
+        );
 
-        // Creamos un BufferedWriter para poder escribir texto dentro del fichero de resultado
-        BufferedWriter writer = new BufferedWriter(new FileWriter(ficheroResultado));
+        BufferedWriter writer = new BufferedWriter(
+                new FileWriter(ficheroResultado)
+        );
 
-        // Escribimos la fecha en el fichero
         writer.write("Fecha: " + fecha);
         writer.newLine();
 
-        // Escribimos el número total de productos
         writer.write("NumeroDeProductos: " + productos.size());
         writer.newLine();
 
-        // Escribimos el beneficio total de todos los productos
         writer.write("BeneficioTotal: " + beneficioTotal);
         writer.newLine();
 
-        // Escribimos la ruta absoluta del fichero XML
         writer.write("Ruta del fichero: " + ficheroXML.getAbsolutePath());
         writer.newLine();
 
-        // Escribimos el nombre del fichero sin la extensión
         writer.write("Nombre del fichero: " + nombreSinExtension);
         writer.newLine();
 
-        // Escribimos el tamaño del fichero XML en bytes
         writer.write("Tamaño del fichero: " + ficheroXML.length() + " bytes");
 
-        // Cerramos el BufferedWriter para guardar correctamente toda la información y liberar el fichero
         writer.close();
     }
 
     /**
      * Exporta los productos de un fichero XML a un fichero Excel.
+     *
      * @param path La ruta de la carpeta donde se guardará el fichero Excel.
      * @param fileXml La ruta al fichero XML que contiene los productos.
      * @throws JAXBException Excepción producida al procesar el fichero XML.
@@ -140,15 +126,22 @@ public class ProductoService {
         String nombreFichero = ficheroXML.getName();
 
         // Quitamos la extensión .xml del nombre del fichero
-        String nombreSinExtension = nombreFichero.substring(0, nombreFichero.lastIndexOf("."));
+        String nombreSinExtension = nombreFichero.substring(
+                0, nombreFichero.lastIndexOf(".")
+        );
 
         // Obtenemos la parte que aparece después del "_"
         // Por ejemplo: inventario_junio2026.xml -> junio2026
-        String fecha = nombreSinExtension.substring(nombreSinExtension.indexOf("_") + 1);
+        String fecha = nombreSinExtension.substring(
+                nombreSinExtension.indexOf("_") + 1
+        );
 
         // Creamos el nombre del fichero Excel
         // Por ejemplo: export_junio2026.xlsx
-        File ficheroExcel = new File(carpeta,"export_" + fecha + ".xlsx");
+        File ficheroExcel = new File(
+                carpeta,
+                "export_" + fecha + ".xlsx"
+        );
 
         // Creamos un nuevo libro de Excel
         Workbook workbook = new XSSFWorkbook();
@@ -169,6 +162,7 @@ public class ProductoService {
         };
 
         // ESTILO DE LA CABECERA
+
 
         CellStyle estiloCabecera = workbook.createCellStyle();
 
@@ -221,6 +215,7 @@ public class ProductoService {
 
         // ESTILO FILA VERDE
 
+
         CellStyle estiloFilaVerde = workbook.createCellStyle();
 
         estiloFilaVerde.setFillForegroundColor(
@@ -254,6 +249,7 @@ public class ProductoService {
         );
 
         // ESTILO FILA BLANCA
+
 
         CellStyle estiloFilaBlanca = workbook.createCellStyle();
 
@@ -289,10 +285,12 @@ public class ProductoService {
 
         // FUENTE PARA LOS CÓDIGOS
 
+
         Font fuenteCodigo = workbook.createFont();
         fuenteCodigo.setBold(true);
 
         // ESTILO DE CÓDIGO VERDE
+
 
         CellStyle estiloCodigoVerde = workbook.createCellStyle();
 
@@ -301,10 +299,205 @@ public class ProductoService {
 
         // ESTILO DE CÓDIGO BLANCO
 
+
         CellStyle estiloCodigoBlanco = workbook.createCellStyle();
 
         estiloCodigoBlanco.cloneStyleFrom(estiloFilaBlanca);
         estiloCodigoBlanco.setFont(fuenteCodigo);
-    }
 
+        // FORMATO DE EUROS PARA FILA VERDE
+
+        CellStyle estiloEurosVerde = workbook.createCellStyle();
+
+        estiloEurosVerde.cloneStyleFrom(estiloFilaVerde);
+
+        estiloEurosVerde.setDataFormat(
+                workbook.createDataFormat().getFormat("#,##0.00 €")
+        );
+
+        // FORMATO DE EUROS PARA FILA BLANCA
+
+
+        CellStyle estiloEurosBlanco = workbook.createCellStyle();
+
+        estiloEurosBlanco.cloneStyleFrom(estiloFilaBlanca);
+
+        estiloEurosBlanco.setDataFormat(
+                workbook.createDataFormat().getFormat("#,##0.00 €")
+        );
+
+        // FORMATO DE PORCENTAJE PARA FILA VERDE
+
+
+        CellStyle estiloPorcentajeVerde = workbook.createCellStyle();
+
+        estiloPorcentajeVerde.cloneStyleFrom(estiloFilaVerde);
+
+        estiloPorcentajeVerde.setDataFormat(
+                workbook.createDataFormat().getFormat("0.00%")
+        );
+
+        // FORMATO DE PORCENTAJE PARA FILA BLANCA
+
+
+        CellStyle estiloPorcentajeBlanco = workbook.createCellStyle();
+
+        estiloPorcentajeBlanco.cloneStyleFrom(estiloFilaBlanca);
+
+        estiloPorcentajeBlanco.setDataFormat(
+                workbook.createDataFormat().getFormat("0.00%")
+        );
+
+        // RECORREMOS TODOS LOS PRODUCTOS
+
+
+        for (int i = 0; i < productos.size(); i++) {
+
+            // Obtenemos el producto que corresponde a la posición actual
+            ProductoEntity productoEntity = productos.get(i);
+
+            // Creamos una fila nueva en Excel
+            // Sumamos 1 porque la fila 0 es la cabecera
+            Row fila = hoja.createRow(i + 1);
+
+            // Elegimos el color de la fila
+            CellStyle estiloFila;
+            CellStyle estiloCodigo;
+            CellStyle estiloEuros;
+            CellStyle estiloPorcentaje;
+
+            if (i % 2 == 0) {
+                estiloFila = estiloFilaVerde;
+                estiloCodigo = estiloCodigoVerde;
+                estiloEuros = estiloEurosVerde;
+                estiloPorcentaje = estiloPorcentajeVerde;
+            } else {
+                estiloFila = estiloFilaBlanca;
+                estiloCodigo = estiloCodigoBlanco;
+                estiloEuros = estiloEurosBlanco;
+                estiloPorcentaje = estiloPorcentajeBlanco;
+            }
+
+            // CÓDIGO
+
+
+            Cell codigo = fila.createCell(0);
+
+            codigo.setCellValue(
+                    productoEntity.getProducto().getCodigo()
+            );
+
+            // Aplicamos color y negrita
+            codigo.setCellStyle(estiloCodigo);
+
+            // NÚMERO DE SERIE
+
+
+            Cell numeroSerie = fila.createCell(1);
+
+            numeroSerie.setCellValue(
+                    productoEntity.getProducto().getNumeroSerie()
+            );
+
+            numeroSerie.setCellStyle(estiloFila);
+
+            // PRECIO
+
+            Cell precio = fila.createCell(2);
+
+            precio.setCellValue(
+                    productoEntity.getProducto().getPrecio().doubleValue()
+            );
+
+            precio.setCellStyle(estiloEuros);
+
+            // DESCUENTO
+
+
+            Cell descuento = fila.createCell(3);
+
+            descuento.setCellValue(
+                    productoEntity.getProducto().getDescuento().doubleValue() / 100
+            );
+
+            descuento.setCellStyle(estiloPorcentaje);
+
+
+            // PRECIO FINAL
+
+
+            Cell precioFinal = fila.createCell(4);
+
+            precioFinal.setCellValue(
+                    productoEntity.getPrecioFinal().doubleValue()
+            );
+
+            precioFinal.setCellStyle(estiloEuros);
+
+
+            // COSTES DE ENVÍO
+
+
+            Cell costesEnvio = fila.createCell(5);
+
+            costesEnvio.setCellValue(
+                    productoEntity.getProducto()
+                            .getCostes()
+                            .getCostesEnvio()
+                            .doubleValue()
+            );
+
+            costesEnvio.setCellStyle(estiloEuros);
+
+            // COSTES DE ALMACENAJE
+
+
+            Cell costesAlmacenaje = fila.createCell(6);
+
+            costesAlmacenaje.setCellValue(
+                    productoEntity.getProducto()
+                            .getCostes()
+                            .getCostesAlmacenaje()
+                            .doubleValue()
+            );
+
+            costesAlmacenaje.setCellStyle(estiloEuros);
+
+
+            // BENEFICIO
+
+
+            Cell beneficio = fila.createCell(7);
+
+            beneficio.setCellValue(
+                    productoEntity.getProfit().doubleValue()
+            );
+
+            beneficio.setCellStyle(estiloEuros);
+        }
+
+
+        // AJUSTAMOS EL ANCHO DE LAS COLUMNAS
+
+
+        for (int i = 0; i < columnas.length; i++) {
+            hoja.autoSizeColumn(i);
+        }
+
+        // Damos espacio al número de serie
+        hoja.setColumnWidth(1, 20 * 256);
+
+        // GUARDAMOS EL EXCEL
+
+        FileOutputStream salida = new FileOutputStream(ficheroExcel);
+
+        // Escribimos el contenido del Workbook en el fichero Excel
+        workbook.write(salida);
+
+        // Cerramos el flujo de salida
+        salida.close();
+
+        // Cerramos el Workbook
+        workbook.close();
+    }
 }
